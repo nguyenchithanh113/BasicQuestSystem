@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quest : ScriptableObject
+public abstract class QuestEvent
 {
-    public QuestDetail questDetail;
-
+    public abstract void Construct();
 }
