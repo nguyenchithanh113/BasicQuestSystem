@@ -9,14 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7101fa374fd02864d87d9eb7b70a1eea, type: 3}
-  m_Name: GoldQuest
+  m_Script: {fileID: 11500000, guid: b142b1bb5f4c9f8478b1be11abc19898, type: 3}
+  m_Name: TotalGoldQuest1
   m_EditorClassIdentifier: 
-  _questID: 6f37f885-e915-4da4-85ab-6625c533eb47
-  _description: Get {gold} gold stoopid!
+  _questID: bc6e2306-f0c6-4412-b7d0-939537ec5a17
+  _description: Earn total {gold} gold stoopid!
   _disposeType: 0
   _rewards:
   - rewardItem: 0
     rewardValue: 100
     rewardIcon: {fileID: 0}
-  goldRequire: 100
+  - rewardItem: 1
+    rewardValue: 100
+    rewardIcon: {fileID: 0}
+  goldRequire: 500

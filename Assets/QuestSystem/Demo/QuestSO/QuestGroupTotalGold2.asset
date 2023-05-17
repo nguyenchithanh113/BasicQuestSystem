@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7101fa374fd02864d87d9eb7b70a1eea, type: 3}
-  m_Name: GoldQuest2
+  m_Script: {fileID: 11500000, guid: 4aab1550db852f547bb9904949151f97, type: 3}
+  m_Name: QuestGroupTotalGold2
   m_EditorClassIdentifier: 
-  _questID: 34fb258c-5dce-44e2-b975-7481f4d57cc1
-  _description: Get {gold} gold stoopid!
-  _disposeType: 0
-  _rewards: []
-  goldRequire: 100
+  _id: 5e237fd5-38ad-4e5b-ace5-f98c748bc181
+  _listQuestRead:
+  - {fileID: 11400000, guid: a895effebcfe7714fb110c2505fe7127, type: 2}
+  _nextGroup: {fileID: 0}
+  allQuest: []

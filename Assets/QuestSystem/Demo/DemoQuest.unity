@@ -678,7 +678,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listQuestGroupRead:
-  - {fileID: 11400000, guid: a6eb1cf95daed2941b5433009d8d3af6, type: 2}
+  - {fileID: 11400000, guid: f03e659e01cc76944b9790a3b34e1a50, type: 2}
+  - {fileID: 11400000, guid: 58736d914b7f45c468e3cf91201fdfa7, type: 2}
 --- !u!114 &348858889
 MonoBehaviour:
   m_ObjectHideFlags: 0

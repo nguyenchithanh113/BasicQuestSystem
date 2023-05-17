@@ -11,6 +11,8 @@ public abstract class QuestView : MonoBehaviour
         _quest = quest;
         _quest.onStateChange += Display;
         _quest.onUpdateEvent += UpdateGUI;
+        Display(_quest.State);
+        UpdateGUI();
     }
     protected abstract void Display(QuestState questState);
     protected abstract void UpdateGUI();

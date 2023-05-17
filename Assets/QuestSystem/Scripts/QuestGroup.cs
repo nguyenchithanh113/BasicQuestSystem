@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [CreateAssetMenu()]
 public class QuestGroup : ScriptableObject
@@ -42,15 +45,15 @@ public class QuestGroup : ScriptableObject
 
     public List<Quest> GetActiveQuest()
     {
-        List<Quest> temp = new List<Quest>();
-        foreach(Quest quest in allQuest)
-        {
-            if(quest.State == QuestState.Active)
-            {
-                temp.Add(quest);
-            }
-        }
-        return temp;
+        //List<Quest> temp = new List<Quest>();
+        //foreach(Quest quest in allQuest)
+        //{
+        //    if(quest.State == QuestState.Active)
+        //    {
+        //        temp.Add(quest);
+        //    }
+        //}
+        return allQuest;
     }
 
     protected void OnQuestFinish(Quest quest)
@@ -89,4 +92,24 @@ public class QuestGroup : ScriptableObject
             _id = System.Guid.NewGuid().ToString();
         }
     }
+#if UNITY_EDITOR
+    [ContextMenu("Add child quest to nest")]
+    private void AddChildQuestToNest()
+    {
+        foreach(Quest quest in _listQuestRead)
+        {           
+            AssetDatabase.AddObjectToAsset(ScriptableObject.Instantiate(quest), this);
+        }
+
+        
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.SetDirty(this);
+        foreach (Quest quest in _listQuestRead)
+        {
+            EditorUtility.SetDirty(quest);
+        }
+    }
+
+#endif
 }

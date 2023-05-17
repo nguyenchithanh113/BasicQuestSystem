@@ -7,6 +7,7 @@ public class QuestDemoScene : MonoBehaviour
     [SerializeField] QuestManager _questManager;
 
     int goldIncrease;
+    int totalGold = 0;
 
     public static QuestDemoScene Instance;
 
@@ -24,7 +25,7 @@ public class QuestDemoScene : MonoBehaviour
 
     void Start()
     {
-        
+        totalGold = PlayerPrefs.GetInt("TotalGold", 0);
     }
 
     // Update is called once per frame
@@ -32,8 +33,11 @@ public class QuestDemoScene : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            goldIncrease += 10;
+            totalGold += 10;
+            PlayerPrefs.SetInt("TotalGold", totalGold);
+
             _questManager.Fire(new GoldIncreaseQuestEvent(10));
+            _questManager.Fire(new TotalGoldEarnEvent(totalGold));
         }   
     }
 

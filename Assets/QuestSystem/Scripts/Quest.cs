@@ -28,10 +28,7 @@ public abstract class Quest : ScriptableObject
 
         _state = GetVerifyState();
 
-        if(_state == QuestState.Active)
-        {
-            ConstructQuestEvent();
-        }
+        ConstructQuestEvent();
     }
 
     protected void SwitchState(QuestState state)
