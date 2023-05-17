@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Reflection;
 
 public class QuestManager : MonoBehaviour
 {
@@ -17,9 +18,9 @@ public class QuestManager : MonoBehaviour
         }
     }
     [SerializeField] protected List<QuestGroup> _listQuestGroupRead;
-    protected List<QuestGroup> _listQuestGroup;
+    protected List<QuestGroup> _listQuestGroup = new List<QuestGroup>();
     protected Dictionary<object, List<QuestSubscription>> _signalMap = new Dictionary<object, List<QuestSubscription>>();
-    protected Dictionary<Type, QuestEvent> _eventMap = new Dictionary<Type, QuestEvent>();
+    //protected Dictionary<Type, QuestEvent> _eventMap = new Dictionary<Type, QuestEvent>();
 
     public static QuestManager Instance;
 
@@ -78,9 +79,9 @@ public class QuestManager : MonoBehaviour
 
             if (groupIsValid)
             {
+                group = group.Clone();
                 group.onProgressToNextGroupQuest += OnNewQuestGroupProgress;
                 group.onDispose += OnQuestGroupDispose;
-                group = group.Clone();
                 group.Construct(this);
                 _listQuestGroup.Add(group);
             }
@@ -141,9 +142,7 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            T e = Activator.CreateInstance(typeof(T)) as T;
-            e.Construct();
-            _eventMap.Add(typeof(T), e);
+            //DeclareEvent<T>();
             _signalMap.Add(typeof(T), new List<QuestSubscription>() { questSubscription });
         }
     }
@@ -156,8 +155,8 @@ public class QuestManager : MonoBehaviour
             {
                 if (_signalMap[typeof(T)][i].identifier.Equals(callback))
                 {
-                    _signalMap[typeof(T)].Remove(_signalMap[typeof(T)][i]);
                     Debug.Log("Remove Quest subscription: " + _signalMap[typeof(T)][i].identifier.ToString());
+                    _signalMap[typeof(T)].Remove(_signalMap[typeof(T)][i]);
                     return;
                 }
             }
@@ -174,29 +173,56 @@ public class QuestManager : MonoBehaviour
     {
         if (_signalMap.ContainsKey(typeof(T)))
         {
-            _eventMap[typeof(T)] = data;
+            //_eventMap[typeof(T)] = data;
 
-            foreach(QuestSubscription questSubscription in _signalMap[typeof(T)])
+            for (int i = _signalMap[typeof(T)].Count - 1; i >= 0; i--)
             {
+                QuestSubscription questSubscription = _signalMap[typeof(T)][i];
                 questSubscription.callback.Invoke(data);
             }
         }
         else
         {
-            Debug.LogError("Quest contain no data event for: " + typeof(T).ToString());
+            Debug.Log("Quest contain no data event for: " + typeof(T).ToString());
         }
     }
 
-    public T GetEventData<T>() where T : QuestEvent
-    {
-        if (_eventMap.ContainsKey(typeof(T)))
-        {
-            return (T)_eventMap[typeof(T)];
-        }
-        else
-        {
-            Debug.Log("Quest: Event is not register");
-            return null;
-        }
-    }
+    //public T GetEventData<T>() where T : QuestEvent
+    //{
+    //    if (_eventMap.ContainsKey(typeof(T)))
+    //    {
+    //        return (T)_eventMap[typeof(T)];
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Quest: Event is not register");
+    //        return null;
+    //    }
+    //}
+
+    //public void DeclareEvent<T>() where T : QuestEvent
+    //{
+    //    if (_eventMap.ContainsKey(typeof(T)))
+    //    {
+            
+    //    }
+    //    else
+    //    {
+    //        var ctors = typeof(T).GetConstructors();
+    //        var ctor = ctors[0];
+
+    //        object[] types = new object[ctor.GetParameters().Length];
+
+    //        int count = 0;
+    //        foreach(ParameterInfo param in ctor.GetParameters())
+    //        {
+    //            Type type = param.ParameterType;
+    //            types[count] = (type.IsValueType ? Activator.CreateInstance(type) : null);
+    //            count++;
+    //        }
+
+    //        T e = Activator.CreateInstance(typeof(T),types) as T;
+    //        _eventMap.Add(typeof(T), e);
+    //    }
+    //}
 }

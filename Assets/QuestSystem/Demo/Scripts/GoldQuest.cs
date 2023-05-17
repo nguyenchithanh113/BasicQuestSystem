@@ -5,7 +5,13 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class GoldQuest : Quest
 {
+    [System.Serializable]
+    public class SaveableData
+    {
+        public int currentIncreaseGold = 0;
+    }
     public int goldRequire = 0;
+    private SaveableData _data;
     public override void Dispose()
     {
         
@@ -22,38 +28,39 @@ public class GoldQuest : Quest
     }
 
     void OnGoldEventUpdate(GoldIncreaseQuestEvent goldIncrease)
-    {
-        if(goldIncrease.goldIncrease >= goldRequire)
+    {       
+        _data.currentIncreaseGold += goldIncrease.goldIncrease;
+        onUpdateEvent?.Invoke();
+        Debug.Log(GetQuestDesc());
+        if (_data.currentIncreaseGold >= goldRequire)
         {
-            SwitchState(QuestState.Complete);
+            OnQuestComplete();
         }
     }
 
-    protected override string GetQuestDesc()
+    public override string GetQuestDesc()
     {
-        throw new System.NotImplementedException();
+        return System.Text.RegularExpressions.Regex.Replace(_description, @"{gold}", _data.currentIncreaseGold + "/" + goldRequire.ToString());
     }
 
     protected override QuestState GetVerifyState()
     {
-        if(_manager.GetEventData<GoldIncreaseQuestEvent>().goldIncrease >= goldRequire)
+        _data = ES3.Load(DataKey(), defaultValue: new SaveableData());
+
+
+        if(_data.currentIncreaseGold >= goldRequire)
         {
             return QuestState.Complete;
         }
         else
         {
+            Debug.Log(GetQuestDesc());
             return QuestState.Active;
-        }
+        }        
     }
 
-
-    protected override void OnQuestFinish()
+    public override void SaveData()
     {
-        
-    }
-
-    protected override void OnStateChange(QuestState state)
-    {
-        
+        ES3.Save(DataKey(), _data);
     }
 }

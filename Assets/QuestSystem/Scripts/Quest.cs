@@ -4,9 +4,10 @@ using UnityEngine;
 
 public abstract class Quest : ScriptableObject
 {
-    [SerializeField] protected string questID;
-    [SerializeField] protected string description;
-    [SerializeField] protected QuestDisposeType disposeType = QuestDisposeType.Destroy;
+    [SerializeField] protected string _questID;
+    [SerializeField] protected string _description;
+    [SerializeField] protected QuestDisposeType _disposeType = QuestDisposeType.Destroy;
+    [SerializeField] List<QuestReward> _rewards;
 
     protected QuestState _state;
 
@@ -15,6 +16,9 @@ public abstract class Quest : ScriptableObject
     public System.Action<QuestState> onStateChange;
 
     public QuestState State => _state;
+    public QuestDisposeType DisposeType => _disposeType;
+    public List<QuestReward> Rewards => _rewards;
+    public string ID => _questID;
 
     protected QuestManager _manager;
 
@@ -34,20 +38,19 @@ public abstract class Quest : ScriptableObject
     {
         _state = state;
 
-        OnStateChange(_state);
+        onStateChange.Invoke(_state);
     }
 
     protected virtual void OnQuestComplete()
     {
-        SwitchState(QuestState.Complete);
-        DeconstructQuestEvent();
+        SwitchState(QuestState.Complete);       
     }
 
-    protected virtual bool FinishQuest()
+    public virtual bool FinishQuest()
     {
         if(_state == QuestState.Complete)
         {
-            OnQuestFinish();
+            DeconstructQuestEvent();
             onQuestFinish?.Invoke(this);
             return true;
         }
@@ -56,13 +59,12 @@ public abstract class Quest : ScriptableObject
     }
 
     protected abstract QuestState GetVerifyState();
-    protected abstract void OnStateChange(QuestState state);
-    protected abstract void OnQuestFinish();
     protected abstract void ConstructQuestEvent();
     protected abstract void DeconstructQuestEvent();
-    protected abstract string GetQuestDesc();
+    public abstract string GetQuestDesc();
 
     public abstract void Dispose();
+    public abstract void SaveData();
 
     public Quest Clone()
     {
@@ -70,10 +72,20 @@ public abstract class Quest : ScriptableObject
     }
     private void OnValidate()
     {
-        if (questID == string.Empty)
+        if (_questID == string.Empty)
         {
-            questID = System.Guid.NewGuid().ToString();
+            _questID = System.Guid.NewGuid().ToString();
         }
+    }
+
+    public virtual void OnDestroy()
+    {
+        SaveData();
+    }
+
+    public string DataKey()
+    {
+        return "QuestData_" + _questID;
     }
 
 }

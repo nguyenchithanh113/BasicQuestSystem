@@ -6,12 +6,12 @@ using UnityEngine;
 public class QuestGroup : ScriptableObject
 {
     [SerializeField] protected string _id;
-    [SerializeField] readonly protected List<Quest> _listQuestRead;
+    [SerializeField] protected List<Quest> _listQuestRead;
     [SerializeField] QuestGroup _nextGroup;
 
-    public List<Quest> allQuest = new List<Quest>();
+    [HideInInspector] public List<Quest> allQuest = new List<Quest>();
 
-    protected int _totalComplete = 0;
+    //protected int _totalFinish = 0;
 
     public string ID => _id;
     public QuestGroup NextGroup => _nextGroup;
@@ -26,12 +26,17 @@ public class QuestGroup : ScriptableObject
             Quest clone = quest.Clone();
             clone.Construct(questManager);
 
-            if (clone.State == QuestState.Complete)
+            if (QuestSystem.IsQuestFinish(clone.ID))
             {
-                _totalComplete++;
+                //_totalFinish++;
+            }
+            else
+            {
+                clone.onQuestFinish += OnQuestFinish;
+                allQuest.Add(clone);
             }
 
-            allQuest.Add(clone);
+            
         }
     }
 
@@ -50,14 +55,17 @@ public class QuestGroup : ScriptableObject
 
     protected void OnQuestFinish(Quest quest)
     {
+        QuestSystem.SetQuestFinish(quest.ID);
         quest.Dispose();
+        quest.onQuestFinish -= OnQuestFinish;
         allQuest.Remove(quest);
-        _totalComplete++;
+        //_totalFinish++;
 
-        if (_totalComplete == allQuest.Count - 1)
+        if (allQuest.Count == 0)
         {
-            if(_nextGroup != null)
-            {
+            QuestSystem.SetQuestGroupFinish(_id);
+            if (_nextGroup != null)
+            {                
                 onProgressToNextGroupQuest?.Invoke(_nextGroup.Clone());
             }
             Dispose();

@@ -5,8 +5,9 @@ using UnityEngine;
 public class GoldIncreaseQuestEvent : QuestEvent
 {
     public int goldIncrease = 0;
-    public override void Construct()
+    public GoldIncreaseQuestEvent(int gold)
     {
-        goldIncrease = 0;
+        goldIncrease = gold;
     }
+    
 }
